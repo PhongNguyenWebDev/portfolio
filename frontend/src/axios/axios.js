@@ -1,6 +1,4 @@
 import axios from "axios";
-import store from "@/store"; // Đảm bảo import store của Vuex nếu có
-import router from "@/router"; // Đảm bảo import router của Vue nếu cần điều hướng
 import Cookies from "js-cookie";
 import dayjs from "dayjs"; // Thư viện xử lý thời gian
 import utc from "dayjs/plugin/utc"; // Plugin để xử lý UTC

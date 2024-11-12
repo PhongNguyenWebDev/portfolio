@@ -1,8 +1,6 @@
 import { fileURLToPath, URL } from "node:url";
-
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import vueDevTools from "vite-plugin-vue-devtools";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,6 +11,22 @@ export default defineConfig({
     },
   },
   build: {
-    target: "esnext", // Điều chỉnh target để hỗ trợ top-level await
+    target: "esnext",
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("lodash")) {
+              return "lodash"; // Tạo một chunk riêng cho lodash
+            }
+            if (id.includes("vue")) {
+              return "vue"; // Tạo một chunk riêng cho Vue
+            }
+            return "vendor"; // Các thư viện còn lại vẫn vào vendor
+          }
+        },
+      },
+    },
+    chunkSizeWarningLimit: 2000, // Tăng giới hạn kích thước chunk warning lên 2MB
   },
 });
