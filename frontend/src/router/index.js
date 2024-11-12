@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-const adminRoutes = () => import("./admin");
-const portfolioRoutes = () => import("./portfolio");
+import adminRoutes from "./admin";
+import portfolioRoutes from "./portfolio";
 
 const routes = [...portfolioRoutes, ...adminRoutes];
 
