@@ -14,14 +14,12 @@ use App\Http\Controllers\Api\V1\Admin\SkillController;
 use App\Http\Controllers\Api\V1\Admin\GeneralController;
 use App\Http\Controllers\Api\V1\Admin\ProjectController;
 use App\Http\Controllers\Api\V1\Admin\FetchLayoutController;
+use App\Http\Controllers\Api\V1\ContactController;
 
 Route::prefix('v1')->group(function () {
     // Register and Login
-    Route::get('about-me', [AboutMeController::class, 'index']);
+    Route::post('/contact', [ContactController::class, 'sendContact']);
     Route::get('fetch-api', [FetchLayoutController::class, 'index']);
-    Route::get('work-ex', [WorkExController::class, 'index']);
-    Route::get('icons', [IconController::class, 'index']);
-    Route::get('sliders', [SliderController::class, 'index']);
     Route::get('downloadCV/{id}', [SliderController::class, 'downloadCV']);
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);

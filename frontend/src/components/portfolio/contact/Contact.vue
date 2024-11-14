@@ -21,7 +21,7 @@
         <h3 class="lg:text-2xl text-xl font-medium mb-4 dark:text-white">
           Send Me a Message
         </h3>
-        <form action="" class="space-y-4">
+        <form @submit.prevent="submitForm" class="space-y-4">
           <div>
             <label
               for="name"
@@ -31,6 +31,7 @@
             <input
               type="text"
               id="name"
+              v-model="form.name"
               class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
               placeholder="Phong Nguyen"
             />
@@ -44,6 +45,7 @@
             <input
               type="email"
               id="email"
+              v-model="form.email"
               class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
               placeholder="phong302.work@mail.com"
             />
@@ -56,6 +58,7 @@
             >
             <textarea
               id="message"
+              v-model="form.message"
               rows="4"
               class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
               placeholder="Your message..."
@@ -77,7 +80,7 @@
         </h3>
         <!-- Infomation -->
         <div class="pb-4">
-          <h4 class="text-xl font-medium mb-4 dark:text-white">Infomation</h4>
+          <h4 class="text-xl font-medium mb-4 dark:text-white">Information</h4>
           <div class="text-gray-600 dark:text-gray-300">
             <font-awesome-icon
               :icon="['far', 'envelope']"
@@ -123,18 +126,34 @@
     </div>
   </section>
 </template>
-<script>
-export default {
-  name: "Contact",
-  data() {
-    return {
-      icons: [
-        { name: "facebook-f", link: "https://facebook.com" },
-        { name: "linkedin-in", link: "https://linkedin.com" },
-        { name: "github", link: "https://github.com" },
-      ],
-    };
-  },
+
+<script setup>
+import { ref } from "vue";
+import axios from "axios";
+
+// Data
+const form = ref({
+  name: "",
+  email: "",
+  message: "",
+});
+const icons = ref([
+  { name: "facebook-f", link: "https://facebook.com" },
+  { name: "linkedin-in", link: "https://linkedin.com" },
+  { name: "github", link: "https://github.com" },
+]);
+
+// Methods
+const submitForm = async () => {
+  try {
+    const response = await axios.post("v1/contact", form.value);
+    // Hiển thị thông báo thành công
+    alert(response.data.message || "Message sent successfully!");
+    form.value = { name: "", email: "", message: "" }; // Reset form
+  } catch (error) {
+    console.error(error);
+    alert("There was an error sending the message.");
+  }
 };
 </script>
 
