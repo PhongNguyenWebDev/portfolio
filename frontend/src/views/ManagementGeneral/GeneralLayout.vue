@@ -16,9 +16,10 @@
           class="mt-1 block w-full border border-gray-300 rounded-md p-2"
         />
         <img
+          v-if="general.imagePreview"
           class="max-w-32 mt-2"
-          :src="getImageUrl(general.logo)"
-          alt="Logo"
+          :src="general.imagePreview"
+          alt="Selected Image"
         />
       </div>
 
@@ -101,16 +102,21 @@ const fetchInfo = async () => {
 
 const handleFileChange = (field, event) => {
   const file = event.target.files[0];
-  if (file) {
+  if (file && file.type.startsWith("image/")) {
+    // Kiểm tra nếu là tệp hình ảnh
     general.value[field] = file;
+    renderFile(file); // Hiển thị ảnh xem trước nếu là tệp ảnh
+  } else {
+    error.value = "Vui lòng chọn tệp hình ảnh hợp lệ!";
   }
 };
-
-const getImageUrl = (imagePath) => {
-  const baseUrl = "http://localhost:8000/storage/";
-  return imagePath ? baseUrl + imagePath : "";
+const renderFile = (file) => {
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    general.value.imagePreview = reader.result; // Set image preview
+  };
+  reader.readAsDataURL(file); // Read file as Data URL
 };
-
 const handleSubmit = async () => {
   const formData = new FormData();
   formData.append("id", 1);

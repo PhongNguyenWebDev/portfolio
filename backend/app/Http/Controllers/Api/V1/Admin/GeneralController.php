@@ -62,12 +62,17 @@ class GeneralController extends Controller
         try {
             // Handle logo file upload
             if ($request->hasFile('logo')) {
-                // Delete existing logo if it exists
+                // Xóa logo hiện tại nếu có
                 if ($general->logo && Storage::disk('public')->exists($general->logo)) {
                     Storage::disk('public')->delete($general->logo);
                 }
-                // Store the new logo
-                $validatedData['logo'] = $request->file('logo')->store('logos', 'public');
+
+                // Lấy tên gốc của tệp logo và thay thế khoảng trắng bằng dấu gạch dưới
+                $logoName = $request->file('logo')->getClientOriginalName();
+                $logoName = str_replace(' ', '_', $logoName);  // Thay thế khoảng trắng bằng dấu gạch dưới
+
+                // Lưu logo mới với tên đã xử lý
+                $validatedData['logo'] = $request->file('logo')->storeAs('logos', $logoName, 'public');
             }
 
             // Update general information

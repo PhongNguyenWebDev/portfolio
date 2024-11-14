@@ -55,22 +55,31 @@
 
       <div class="mb-4">
         <label for="image_tech" class="block text-sm font-medium text-gray-700"
-          >Tech Image</label
+          >Tech Images</label
         >
         <input
           type="file"
           id="image_tech"
           @change="handleFileChange('image_tech', $event)"
+          multiple
           class="mt-1 block w-full border border-gray-300 rounded-md p-2"
         />
-      </div>
-
-      <div class="mb-4" v-if="project.image_tech">
-        <img
-          :src="getImageUrl(project.image_tech)"
-          alt="Current Tech Image"
-          class="max-w-32 mt-2"
-        />
+        <div
+          v-if="project.image_techPreviews.length > 0"
+          class="mt-2 flex overflow-x-auto space-x-2"
+        >
+          <div
+            v-for="(preview, index) in project.image_techPreviews"
+            :key="index"
+            class="w-32"
+          >
+            <img
+              :src="preview"
+              alt="Tech Image Preview"
+              class="w-28 h-20 object-cover rounded-md"
+            />
+          </div>
+        </div>
       </div>
 
       <div class="mb-4">
@@ -115,19 +124,27 @@ const project = ref({
   description: "",
   url: "",
   image_project: null,
-  image_tech: null,
+  image_techPreviews: [],
+  imagePreview: null,
+  image_tech: [],
 });
 
 const error = ref(null);
-
 const fetchProject = async () => {
   try {
     const id = route.params.id;
     const data = await store.dispatch("project/getInfoById", id);
+    console.log("Fetched project data:", data); // Kiểm tra dữ liệu
+
     project.value = {
       ...project.value,
       ...data,
     };
+
+    // Nếu image_tech là null, khởi tạo mảng rỗng
+    if (!project.value.image_tech) {
+      project.value.image_tech = [];
+    }
   } catch (err) {
     console.error("Error fetching project data:", err);
     error.value = "Unable to fetch project data.";
@@ -135,20 +152,30 @@ const fetchProject = async () => {
 };
 
 const getImageUrl = (imagePath) => {
-  // URL cơ bản cho hình ảnh
-  const baseUrl = "http://localhost:8000/storage/";
-  return baseUrl + imagePath; // Nối đường dẫn cơ bản với đường dẫn hình ảnh từ DB
+  const baseUrl = "http://localhost:8000";
+  return baseUrl + imagePath;
+};
+
+// Helper function for handling file rendering
+const renderFile = (files) => {
+  return Array.from(files).map((file) => URL.createObjectURL(file));
 };
 
 const handleFileChange = (field, event) => {
-  const file = event.target.files[0];
-  if (file) {
-    project.value[field] = file;
+  if (event.target.files.length > 0) {
+    const files = event.target.files;
+    if (field === "image_project") {
+      project.value.imagePreview = renderFile(files)[0];
+    } else if (field === "image_tech") {
+      project.value.image_techPreviews = renderFile(files);
+      // Quyết định xem image có được thêm vào ko
+      project.value.image_tech = Array.from(files);
+    }
   }
 };
+
 const handleSubmit = async () => {
   const formData = new FormData();
-  // Thêm các trường thông tin vào formData
   const fields = [
     "id",
     "title",
@@ -158,16 +185,42 @@ const handleSubmit = async () => {
     "image_tech",
   ];
 
-  fields.forEach((field) => {
-    if (field === "id") {
-      formData.append(field, route.params.id); // Lấy id từ params
-    } else if (field !== "image_project" && field !== "image_tech") {
-      formData.append(field, project.value[field]);
-    } else {
-      if (project.value[field] && project.value[field] instanceof Blob) {
-        formData.append(field, project.value[field], `${field}.png`);
+  // Append ID only once
+  formData.append("id", route.params.id);
+
+  // Helper function to handle file appending
+  const handleFileUpload = (field, allowedTypes) => {
+    if (project.value[field] && project.value[field] instanceof Blob) {
+      const file = project.value[field];
+      const fileName = file.name;
+      const fileExtension = file.type ? file.type.split("/").pop() : "";
+      if (allowedTypes.includes(fileExtension)) {
+        formData.append(field, file, fileName);
       } else {
-        console.warn(`${field} is not valid:`, project.value[field]);
+        console.warn(`${field} must be a valid file type:`, file);
+      }
+    } else if (Array.isArray(project.value[field])) {
+      project.value[field].forEach((file) => {
+        if (file instanceof Blob) {
+          const fileExtension = file.type ? file.type.split("/").pop() : "";
+          if (allowedTypes.includes(fileExtension)) {
+            formData.append(field + "[]", file, file.name);
+          } else {
+            console.warn(`${field} must be a valid file type:`, file);
+          }
+        }
+      });
+    }
+  };
+
+  fields.forEach((field) => {
+    if (field === "image_project") {
+      handleFileUpload(field, ["jpeg", "png", "jpg", "gif"]);
+    } else if (field === "image_tech") {
+      handleFileUpload(field, ["jpeg", "png", "jpg", "gif"]);
+    } else {
+      if (project.value[field]) {
+        formData.append(field, project.value[field]);
       }
     }
   });
@@ -177,12 +230,13 @@ const handleSubmit = async () => {
       id: route.params.id,
       formData,
     });
-
-    Toast.success("Icon updated successfully!");
+    Toast.success("Project updated successfully!");
     setTimeout(() => {
-      router.push("/admin/project"); // Redirect after delay
+      router.push("/admin/project");
     }, 4000);
-  } catch (error) {
+  } catch (err) {
+    Toast.error("Unable to update project. Please try again.");
+    console.error("Error updating project:", err);
     error.value = "An error occurred while updating the project.";
   }
 };

@@ -66,9 +66,10 @@
           class="mt-1 block w-full border border-gray-300 rounded-md p-2"
         />
         <img
+          v-if="slider.imagePreview"
           class="max-w-32 mt-2"
-          :src="getImageUrl(slider.image)"
-          alt="Error Image"
+          :src="slider.imagePreview"
+          alt="Selected Image"
         />
       </div>
 
@@ -148,73 +149,73 @@ const handleFileChange = (field, event) => {
   const file = event.target.files[0];
   if (file) {
     slider.value[field] = file;
+
+    // Render the file (image) preview if it's an image
+    if (field === "image" && file.type.startsWith("image/")) {
+      renderFile(file);
+    }
   }
 };
-const getImageUrl = (imagePath) => {
-  // URL cơ bản cho hình ảnh
-  const baseUrl = "http://localhost:8000/storage/";
-  return baseUrl + imagePath; // Nối đường dẫn cơ bản với đường dẫn hình ảnh từ DB
+const renderFile = (file) => {
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    slider.value.imagePreview = reader.result; // Set image preview
+  };
+  reader.readAsDataURL(file); // Read file as Data URL
 };
 
 const handleSubmit = async () => {
   const formData = new FormData();
   const fields = ["id", "name", "position", "description", "url_cv", "image"];
 
-  // Always append ID 1 to formData
+  // Append ID only once
   formData.append("id", 1); // Assuming you're always updating ID 1
 
-  fields.forEach((field) => {
-    if (field === "id") {
-      formData.append(field, 1); // Always append ID
-    } else if (field === "url_cv") {
-      // Handle file upload for 'url_cv'
-      if (slider.value[field] && slider.value[field] instanceof Blob) {
-        // Append the CV file (PDF)
-        const fileExtension = slider.value[field].type.split("/").pop();
-        if (["pdf"].includes(fileExtension)) {
-          // Check if it is a PDF
-          formData.append(
-            field,
-            slider.value[field],
-            `${field}.${fileExtension}`
-          );
-        } else {
-          console.warn(`${field} must be a PDF file:`, slider.value[field]);
-        }
+  // Helper function to handle file appending
+  const handleFileUpload = (field, allowedTypes) => {
+    if (slider.value[field] && slider.value[field] instanceof Blob) {
+      const file = slider.value[field];
+      const fileName = file.name; // Get original file name
+      const fileExtension = file.type.split("/").pop(); // Get file extension
+
+      // Check if the file type is valid
+      if (allowedTypes.includes(fileExtension)) {
+        formData.append(field, file, fileName); // Append the file with its original name
+      } else {
+        console.warn(`${field} must be a valid file type:`, file);
       }
+    }
+  };
+
+  // Loop over each field
+  fields.forEach((field) => {
+    if (field === "url_cv") {
+      // Handle PDF upload
+      handleFileUpload(field, ["pdf"]);
     } else if (field === "image") {
       // Handle image upload
-      if (slider.value[field] && slider.value[field] instanceof Blob) {
-        const imageExtension = slider.value[field].type.split("/").pop();
-        if (["jpeg", "png", "jpg", "gif"].includes(imageExtension)) {
-          // Check for valid image types
-          formData.append(
-            field,
-            slider.value[field],
-            `${field}.${imageExtension}`
-          );
-        } else {
-          console.warn(
-            `${field} must be an image file (jpeg, png, jpg, gif):`,
-            slider.value[field]
-          );
-        }
-      } else {
-        console.warn(`${field} is required and must be an image file.`);
-      }
+      handleFileUpload(field, ["jpeg", "png", "jpg", "gif"]);
+    } else if (field === "id") {
+      // Skip ID field as it is already appended
+      return;
     } else {
       // Append other fields directly
-      formData.append(field, slider.value[field]);
+      if (slider.value[field]) {
+        formData.append(field, slider.value[field]);
+      }
     }
   });
 
   try {
+    // Dispatch the form data to the store action for updating slider
     await store.dispatch("slider/updateInfo", {
       id: 1, // Always update ID 1
       formData,
     });
+
     Toast.success("Slider updated successfully!");
   } catch (err) {
+    // Handle error
     Toast.error(
       "Unable to update slider. Please make sure all fields are filled correctly and try again."
     );

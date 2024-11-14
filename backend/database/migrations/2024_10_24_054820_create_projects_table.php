@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title', 200); // Giới hạn tiêu đề tối đa 200 ký tự
             $table->string('image_project')->nullable(); // Có thể để null nếu chưa có ảnh
             $table->text('description')->nullable(); // Không bắt buộc
-            $table->string('image_tech')->nullable(); // Có thể null nếu chưa có ảnh kỹ thuật
+            $table->json('image_tech')->nullable(); // Có thể null nếu chưa có ảnh kỹ thuật
             $table->string('url')->nullable(); // URL có thể null
             $table->timestamps();
         });

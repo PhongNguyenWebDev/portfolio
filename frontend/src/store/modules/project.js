@@ -99,19 +99,27 @@ const actions = {
     }
   },
   async updateInfo({ commit }, { id, formData }) {
+    // Append ID to the formData
     formData.append("id", id);
+
     try {
+      // Sending the request with the 'PUT' method via query parameter `_method=PUT`
       const response = await axios.post(`v1/admin/projects/${id}`, formData, {
         params: {
-          _method: "PUT", // Tham số truy vấn nếu cần
+          _method: "PUT", // Method override
+        },
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
       });
-      commit("UPDATE_INFO", response.data.project); // Gọi commit với response
+      // If request is successful, commit the data to the store
+      commit("UPDATE_INFO", response.data.project);
       commit("CLEAR_ERROR");
     } catch (error) {
+      // If there's an error, commit the error to the store
       console.error("Error updating project:", error);
-      commit("SET_ERROR", error.response ? error.response.data : error.message); // Ghi lại lỗi
-      throw error; // Ném lại lỗi để có thể xử lý ở nơi gọi action
+      commit("SET_ERROR", error.response ? error.response.data : error.message);
+      throw error; // Re-throw error to be handled where action was called
     }
   },
   async deleteInfo({ commit }, id) {

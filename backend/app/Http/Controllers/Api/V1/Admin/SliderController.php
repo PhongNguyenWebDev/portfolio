@@ -27,15 +27,21 @@ class SliderController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        // Xử lý hình ảnh
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public');
+            $imageName = $request->file('image')->getClientOriginalName();
+            $imageName = str_replace(' ', '_', $imageName);
+            $imagePath = $request->file('image')->storeAs('images', $imageName, 'public');
             $validatedData['image'] = $imagePath;
         }
 
+        // Xử lý CV PDF
         if ($request->hasFile('url_cv')) {
-            $pdfPath = $request->file('url_cv')->store('pdfs', 'public');
+            $pdfName = $request->file('url_cv')->getClientOriginalName();
+            $pdfPath = $request->file('url_cv')->storeAs('pdfs', $pdfName, 'public');
             $validatedData['url_cv'] = $pdfPath;
         }
+
 
         $slider = Slider::create($validatedData);
         return response()->json(new SliderResource($slider), 201);
@@ -59,9 +65,6 @@ class SliderController extends Controller
             return response()->json(['message' => 'Slider not found'], 404);
         }
 
-        // In ra dữ liệu nhận được từ request để kiểm tra
-        Log::info($request->all()); // In ra log để kiểm tra
-
         // Xác thực dữ liệu yêu cầu
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -73,24 +76,22 @@ class SliderController extends Controller
 
         // Xử lý hình ảnh
         if ($request->hasFile('image')) {
-            // Xóa tệp hình ảnh cũ nếu có
-            if ($slider->image) {
-                Storage::delete('public/' . $slider->image);
+            // Kiểm tra và xóa ảnh cũ nếu có
+            if ($slider->image && Storage::disk('public')->exists($slider->image)) {
+                Storage::disk('public')->delete($slider->image);
             }
-            // Lưu tệp hình ảnh mới
-            $imagePath = $request->file('image')->store('images', 'public');
-            $validatedData['image'] = $imagePath; // Cập nhật đường dẫn hình ảnh
+
+            // Lấy tên gốc của tệp và thay thế khoảng trắng bằng dấu gạch dưới
+            $imageName = time() . '_' . uniqid() . '.' . $request->file('image')->getClientOriginalExtension(); // Sử dụng time() + uniqid() để đảm bảo tên duy nhất
+            $imagePath = $request->file('image')->storeAs('images', $imageName, 'public');
+            $validatedData['image'] = $imagePath;
         }
 
-        // Xử lý PDF
+        // Xử lý CV PDF
         if ($request->hasFile('url_cv')) {
-            // Xóa tệp PDF cũ nếu có
-            if ($slider->url_cv) {
-                Storage::delete('public/' . $slider->url_cv);
-            }
-            // Lưu tệp PDF mới
-            $pdfPath = $request->file('url_cv')->store('pdfs', 'public');
-            $validatedData['url_cv'] = $pdfPath; // Cập nhật đường dẫn tệp PDF
+            $pdfName = $request->file('url_cv')->getClientOriginalName();
+            $pdfPath = $request->file('url_cv')->storeAs('pdfs', $pdfName, 'public');
+            $validatedData['url_cv'] = $pdfPath;
         }
 
         // Cập nhật slider với dữ liệu hợp lệ

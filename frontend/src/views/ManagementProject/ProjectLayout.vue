@@ -58,11 +58,16 @@
             />
           </td>
           <td class="px-6 py-4 border-b border-gray-200">
-            <img
-              :src="getImageUrl(project.image_tech)"
-              alt="Tech Image"
-              class="w-16 h-16 object-cover"
-            />
+            <div class="flex space-x-2 overflow-x-auto">
+              <!-- Iterate through the tech images and display each one -->
+              <img
+                v-for="(techImage, index) in project.image_tech"
+                :key="index"
+                :src="getImageUrl(techImage)"
+                alt="Tech Image"
+                class="w-16 h-16 object-cover"
+              />
+            </div>
           </td>
           <td class="px-6 py-4 border-b border-gray-200">
             {{ project.description }}
@@ -75,13 +80,13 @@
               >{{ project.url }}</a
             >
           </td>
-          <td class="px-6 py-4 border-b border-gray-200 text-right">
-            <BaseButton color="teal" @click="handleEdit(project.id)"
-              >Edit</BaseButton
-            >
-            <BaseButton color="red" @click="confirmDelete(project.id)"
-              >Delete</BaseButton
-            >
+          <td class="px-6 py-4 border-b border-gray-200 text-right space-x-2">
+            <BaseButton color="teal" @click="handleEdit(project.id)">
+              Edit
+            </BaseButton>
+            <BaseButton color="red" @click="confirmDelete(project.id)">
+              Delete
+            </BaseButton>
           </td>
         </tr>
       </tbody>
@@ -119,8 +124,7 @@ const fetchProjects = async () => {
 
 // Cập nhật hàm getImageUrl để phù hợp với đường dẫn hình ảnh
 const getImageUrl = (imagePath) => {
-  // URL cơ bản cho hình ảnh
-  const baseUrl = "http://localhost:8000/storage/";
+  const baseUrl = "http://localhost:8000"; // URL cơ bản cho hình ảnh
   return baseUrl + imagePath; // Nối đường dẫn cơ bản với đường dẫn hình ảnh từ DB
 };
 

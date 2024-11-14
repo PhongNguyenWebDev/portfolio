@@ -30,27 +30,27 @@ axios.interceptors.request.use(
 );
 
 // Thêm interceptor cho response để xử lý lỗi và chuyển đổi thời gian
-// axios.interceptors.response.use(
-//   (response) => {
-//     // Giả sử thời gian bạn nhận được từ API có dạng UTC
-//     if (response.data && response.data.timestamp) {
-//       // Kiểm tra xem có trường timestamp không
-//       // Chuyển đổi thời gian sang múi giờ địa phương (ví dụ: Việt Nam)
-//       response.data.localTime = dayjs
-//         .utc(response.data.timestamp)
-//         .tz("Asia/Ho_Chi_Minh")
-//         .format("YYYY-MM-DD HH:mm:ss");
-//     }
-//     return response; // Trả về response bình thường
-//   },
-//   (error) => {
-//     if (error.response && error.response.status === 401) {
-//       // Nếu lỗi là 401, nghĩa là token đã hết hạn hoặc không hợp lệ
-//       store.dispatch("auth/logout"); // Gọi action logout trong Vuex để xoá token
-//       router.push("/"); // Điều hướng về trang đăng nhập
-//     }
-//     return Promise.reject(error); // Trả về lỗi để các nơi khác có thể xử lý tiếp
-//   }
-// );
+axios.interceptors.response.use(
+  (response) => {
+    // Giả sử thời gian bạn nhận được từ API có dạng UTC
+    if (response.data && response.data.timestamp) {
+      // Kiểm tra xem có trường timestamp không
+      // Chuyển đổi thời gian sang múi giờ địa phương (ví dụ: Việt Nam)
+      response.data.localTime = dayjs
+        .utc(response.data.timestamp)
+        .tz("Asia/Ho_Chi_Minh")
+        .format("YYYY-MM-DD HH:mm:ss");
+    }
+    return response; // Trả về response bình thường
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Nếu lỗi là 401, nghĩa là token đã hết hạn hoặc không hợp lệ
+      store.dispatch("auth/logout"); // Gọi action logout trong Vuex để xoá token
+      router.push("/"); // Điều hướng về trang đăng nhập
+    }
+    return Promise.reject(error); // Trả về lỗi để các nơi khác có thể xử lý tiếp
+  }
+);
 
 export default axios;

@@ -18,36 +18,37 @@
     </div>
 
     <div class="grid grid-cols-12 gap-3">
-      <div class="lg:col-span-6 col-span-12 w-full mx-auto about_item">
+      <!-- Accordion Section -->
+      <div class="lg:col-span-6 col-span-12 w-full mx-auto">
         <div
-          v-for="accordion in accor"
-          :key="accordion.title"
-          class="border-gray-200 rounded mb-2"
+          v-for="item in aboutMe"
+          :key="item.title"
+          class="border-gray-200 rounded mb-2 about_item"
         >
           <div class="flex justify-between items-center">
             <h1
               class="w-full dark:text-white text-left text-base py-3 px-4 font-medium"
-              @click="toggleAccordion(accordion.title)"
+              @click="toggleAccordion(item.title)"
             >
-              {{ accordion.title }}
+              {{ item.title }}
             </h1>
             <svg
               :class="[
                 'w-6 h-6 cursor-pointer dark:text-white transition-all',
-                { 'rotate-180': activeAccordion === accordion.title },
+                { 'rotate-180': activeAccordion === item.title },
               ]"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              @click="toggleAccordion(accordion.title)"
+              @click="toggleAccordion(item.title)"
             >
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 :d="
-                  activeAccordion === accordion.title
+                  activeAccordion === item.title
                     ? 'M5 12h14'
                     : 'M12 4.5v15m7.5-7.5h-15'
                 "
@@ -56,18 +57,19 @@
           </div>
           <div
             :style="{
-              maxHeight: activeAccordion === accordion.title ? '300px' : '0px',
+              maxHeight: activeAccordion === item.title ? '300px' : '0px',
             }"
             class="overflow-hidden text-start toggle"
           >
             <div
               class="p-4 text-gray-700 dark:text-gray-400"
-              v-html="accordion.description"
+              v-html="item.description"
             ></div>
           </div>
         </div>
       </div>
 
+      <!-- Work Experience Section -->
       <div class="lg:col-span-6 col-span-12">
         <div
           class="grid lg:grid-cols-12 gap-3 grid-cols-1 dark:text-white about_ex"
@@ -96,12 +98,10 @@
               <span
                 class="inline-flex items-center justify-center w-28 h-6 dark:bg-sky-400 bg-black text-white text-xs rounded-full"
               >
-                {{ item.formattedStartDate }} - {{ item.formattedEndDate }}
+                {{ formatDate(item.start_date) }} -
+                {{ formatDate(item.end_date) }}
               </span>
-
-              <p class="text-sm font-medium">
-                {{ item.position }}
-              </p>
+              <p class="text-sm font-medium">{{ item.position }}</p>
               <p class="text-xs py-1">
                 GPA: {{ item.gpa }}/{{ item.gpa_scale }}
               </p>
@@ -114,43 +114,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
-import axios from "axios";
+import { ref } from "vue";
 import { format } from "date-fns";
-
-const accor = ref([]);
-const workEx = ref([]);
+const props = defineProps({
+  aboutMe: {
+    type: Array,
+    required: true,
+  },
+  workEx: {
+    type: Array,
+    required: true,
+  },
+});
+// Khai báo activeAccordion dưới dạng ref để có thể thay đổi
 const activeAccordion = ref(null);
 
+// Hàm toggle accordion
 const toggleAccordion = (title) => {
   activeAccordion.value = activeAccordion.value === title ? null : title;
 };
-
+// // Hàm format ngày tháng
 const formatDate = (date) => {
   return date ? format(new Date(date), "M/yyyy") : "";
 };
-
-const fetchData = async () => {
-  try {
-    const [aboutResponse, workResponse] = await Promise.all([
-      axios.get("v1/about-me"),
-      axios.get("v1/work-ex"),
-    ]);
-    accor.value = aboutResponse.data.data;
-    workEx.value = workResponse.data.data.map((item) => ({
-      ...item,
-      formattedStartDate: formatDate(item.start_date),
-      formattedEndDate: formatDate(item.end_date),
-    }));
-  } catch (error) {
-    console.error("Có lỗi xảy ra khi lấy dữ liệu:", error);
-    // Optionally, set an error state to inform the user
-  }
-};
-
-onMounted(() => {
-  fetchData();
-});
 </script>
 
 <style scoped>

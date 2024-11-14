@@ -1,27 +1,26 @@
 <template>
-  <section
-    class="relative slider lg:pt-0 pt-20 bg-gray-100 dark:bg-black lg:px-0 px-2"
-  >
+  <section class="relative slider lg:pt-0 pt-20 bg-gray-100 dark:bg-black px-2">
     <div
       class="mx-auto lg:w-[80%] lg:pt-10 pt-0 grid grid-cols-1 lg:grid-cols-12 lg:gap-4 items-center justify-center lg:h-screen dark:text-white text-center dark:bg-black bg-gray-100"
+      v-for="slider in sliders"
+      :key="slider.id"
     >
       <div class="lg:col-span-6 sm:col-span-6 text-start">
         <span
-          class="inline-flex items-center justify-center w-24 h-6 dark:bg-sky-400 bg-black text-white text-xs font-bold rounded-full"
-          v-html="sliders.name"
+          class="inline-flex items-center justify-center w-[auto] px-2 h-6 dark:bg-sky-400 bg-black text-white text-xs font-bold rounded-full"
+          v-html="slider.name"
         ></span>
 
         <h1 class="lg:py-7 py-2 sm:text-5xl 2xl:text-6xl font-medium">
           I'm a
           <span
             class="text-slide font-medium fade-in"
-            v-html="sliders.position"
-          >
-          </span>
+            v-html="slider.position"
+          ></span>
         </h1>
         <p
           class="ms:text-base 2xl:text-base text-gray-400 text-wrap fade-in"
-          v-html="sliders.description"
+          v-html="slider.description"
         ></p>
 
         <div class="flex justify-start mt-7">
@@ -32,7 +31,7 @@
           </button>
           <button
             class="bg-slate-200 dark:text-black hover:bg-slate-300 font-medium py-2 px-4 rounded flex align-center"
-            @click="downloadCV(sliders.id)"
+            @click="downloadCV(slider)"
           >
             Download CV
             <svg
@@ -61,7 +60,6 @@
                 :href="item.url"
                 class="flex justify-center text-center items-center w-10 h-10 rounded-full ring-1 ring-sky-400 hover:bg-cyan-500"
               >
-                <!-- Sử dụng v-bind:class để áp dụng class động -->
                 <font-awesome-icon :icon="['fab', item.class_name]" />
               </a>
             </li>
@@ -69,13 +67,13 @@
         </div>
       </div>
       <div
-        class="lg:col-span-6 sm:col-span-6 flex lg:justify-end img-slide justify-end lg:mx-auto"
+        class="lg:col-span-6 sm:col-span-6 flex lg:justify-end img-slide justify-end lg:mx-auto lg:w-[auto] w-full lg:mt-0 mt-2"
       >
         <img
           rel="preload"
           loading="lazy"
-          class="justify-center fade-in"
-          :src="getImageUrl(sliders.image)"
+          class="justify-center fade-in object-cover"
+          :src="getImageUrl(slider.image)"
           alt="avatar"
         />
       </div>
@@ -84,42 +82,40 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
 import axios from "axios";
-
-const icons = ref([]);
-const sliders = ref([]);
-
-const fetchData = async (url, refVar) => {
-  try {
-    const response = await axios.get(url);
-    refVar.value = response.data.data;
-  } catch (error) {
-    console.error(`Có lỗi khi lấy dữ liệu từ ${url}:`, error);
-  }
-};
+import { defineProps } from "vue";
+const props = defineProps({
+  sliders: {
+    type: Array,
+    required: true,
+  },
+  icons: {
+    type: Array,
+    required: true,
+  },
+});
 
 const getImageUrl = (imagePath) =>
-  imagePath ? `http://localhost:8000/storage/${imagePath}` : "";
+  imagePath ? `http://localhost:8000${imagePath}` : "";
 
-const downloadCV = async (id) => {
+const downloadCV = async (slider) => {
   try {
-    const { data } = await axios.get(`v1/downloadCV/${id}`, {
-      responseType: "blob",
-    });
+    const { data } = await axios.get(
+      `http://localhost:8000/api/v1/downloadCV/${slider.id}`, // Sử dụng slider.id thay vì slider.id trực tiếp
+      {
+        responseType: "blob",
+      }
+    );
+
+    // Tạo URL cho dữ liệu tải về
     const url = URL.createObjectURL(data);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${sliders.value.name}.pdf`;
+    link.download = `${slider.url_cv}`; // Sử dụng slider.url_cv từ đối tượng slider
     link.click();
     URL.revokeObjectURL(url);
   } catch (error) {
     console.error("Có lỗi khi tải CV:", error);
   }
 };
-
-onMounted(() => {
-  fetchData("v1/sliders", sliders);
-  fetchData("v1/icons", icons);
-});
 </script>

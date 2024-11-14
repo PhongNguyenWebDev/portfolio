@@ -13,10 +13,12 @@ use App\Http\Controllers\Api\V1\Admin\ProfileController;
 use App\Http\Controllers\Api\V1\Admin\SkillController;
 use App\Http\Controllers\Api\V1\Admin\GeneralController;
 use App\Http\Controllers\Api\V1\Admin\ProjectController;
+use App\Http\Controllers\Api\V1\Admin\FetchLayoutController;
 
 Route::prefix('v1')->group(function () {
     // Register and Login
     Route::get('about-me', [AboutMeController::class, 'index']);
+    Route::get('fetch-api', [FetchLayoutController::class, 'index']);
     Route::get('work-ex', [WorkExController::class, 'index']);
     Route::get('icons', [IconController::class, 'index']);
     Route::get('sliders', [SliderController::class, 'index']);

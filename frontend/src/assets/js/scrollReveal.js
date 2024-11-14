@@ -34,6 +34,7 @@ const revealElements = () => {
   revealWithOptions(".about_item", {
     duration: 1000,
     delay: 700,
+    interval: 300,
   });
   revealWithOptions(".about_ex", {
     duration: 2000,
