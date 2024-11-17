@@ -102,7 +102,7 @@
                 {{ formatDate(item.end_date) }}
               </span>
               <p class="text-sm font-medium">{{ item.position }}</p>
-              <p class="text-xs py-1">
+              <p v-if="item.gpa_scale > 0" class="text-xs py-1">
                 GPA: {{ item.gpa }}/{{ item.gpa_scale }}
               </p>
             </div>
