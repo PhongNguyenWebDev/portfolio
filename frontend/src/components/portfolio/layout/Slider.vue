@@ -73,7 +73,7 @@
           rel="preload"
           loading="lazy"
           class="justify-center fade-in object-cover"
-          :src="getImageUrl(slider.image)"
+          :src="slider.image"
           alt="avatar"
         />
       </div>
@@ -101,7 +101,7 @@ const getImageUrl = (imagePath) =>
 const downloadCV = async (slider) => {
   try {
     const { data } = await axios.get(
-      `http://localhost:8000/api/v1/downloadCV/${slider.id}`, // Sử dụng slider.id thay vì slider.id trực tiếp
+      `https://api.phongnguyen.io.vn/api/v1/downloadCV/${slider.id}`, // Sử dụng slider.id thay vì slider.id trực tiếp
       {
         responseType: "blob",
       }

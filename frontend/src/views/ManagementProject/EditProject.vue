@@ -34,7 +34,7 @@
 
       <div class="mb-4" v-if="project.image_project">
         <img
-          :src="getImageUrl(project.image_project)"
+          :src="project.image_project"
           alt="Current Project Image"
           class="max-w-32 mt-2"
         />

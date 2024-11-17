@@ -7,12 +7,7 @@
     >
       <!-- Logo -->
       <div class="flex-shrink-0" v-for="item in general" :key="item.logo">
-        <img
-          rel="preload"
-          :src="getImageUrl(item.logo)"
-          alt="Logo"
-          class="w-40"
-        />
+        <img rel="preload" :src="item.logo" alt="Logo" class="w-40" />
       </div>
 
       <!-- Navigation Links -->

@@ -24,7 +24,7 @@
       >
         <img
           class="object-cover transition-transform duration-500 ease-in-out hover:scale-105 rounded-t-lg lg:h-[200px] h-[200px] w-full dark:ring-1 dark:ring-cyan-200"
-          :src="getImageUrl(item.image_project)"
+          :src="item.image_project"
           alt="Errors image"
           rel="preload"
           loading="lazy"
@@ -45,7 +45,7 @@
               v-for="(tech, index) in item.image_tech"
               :key="index"
               class="h-8 w-8 object-cover"
-              :src="getImageUrl(tech)"
+              :src="tech"
               loading="lazy"
               alt="Tech icon"
             />

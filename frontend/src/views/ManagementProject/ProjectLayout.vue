@@ -52,7 +52,7 @@
           </td>
           <td class="px-6 py-4 border-b border-gray-200">
             <img
-              :src="getImageUrl(project.image_project)"
+              :src="project.image_project"
               alt="Project Image"
               class="w-16 h-16 object-cover"
             />
@@ -63,7 +63,7 @@
               <img
                 v-for="(techImage, index) in project.image_tech"
                 :key="index"
-                :src="getImageUrl(techImage)"
+                :src="techImage"
                 alt="Tech Image"
                 class="w-16 h-16 object-cover"
               />
