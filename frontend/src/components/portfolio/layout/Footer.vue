@@ -10,7 +10,7 @@
         <div class="flex-shrink-0" v-for="item in general" :key="item.logo">
           <img
             rel="preload"
-            :src="getImageUrl(item.logo)"
+            :src="item.logo"
             alt="Logo"
             class="w-40"
             loading="lazy"

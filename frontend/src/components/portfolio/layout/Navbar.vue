@@ -30,7 +30,10 @@
       <!-- Dark Mode Toggle & User/Login -->
       <div class="flex items-center lg:space-x-4 space-x-2">
         <!-- Dark Mode Toggle -->
-        <button @click="toggleDarkMode" class="focus:outline-none">
+        <button
+          @click="toggleDarkMode"
+          class="focus:outline-none dark:text-gray-200"
+        >
           <svg
             v-if="!isDarkMode"
             xmlns="http://www.w3.org/2000/svg"
@@ -64,17 +67,30 @@
         </button>
 
         <!-- Login Button or User Info -->
-        <div v-if="!user" @click="showLoginPopup" class="cursor-pointer">
-          <span>Login</span>
+        <div class="lg:flex hidden">
+          <div
+            v-if="!user"
+            @click="showLoginPopup"
+            class="cursor-pointer dark:text-gray-200"
+          >
+            <span class="dark:text-gray-200">Login</span>
+          </div>
+          <span v-else class="dark:text-white">{{ user.name }}</span>
         </div>
-        <span v-else class="dark:text-white">{{ user.name }}</span>
       </div>
+
+      <!-- Hamburger Icon for Mobile -->
+      <button @click="toggleNavVisibility" class="lg:hidden block text-3xl">
+        <span :class="isMobileNavVisible ? 'text-gray-400' : 'text-gray-700'"
+          >☰</span
+        >
+      </button>
     </nav>
 
     <!-- Mobile Navigation Menu -->
     <div
       v-show="isMobileNavVisible"
-      class="fixed top-0 left-0 h-full w-2/3 bg-white dark:bg-black z-50 p-4"
+      class="fixed top-0 left-0 h-full w-2/3 bg-white dark:bg-black z-50 p-4 transition-transform duration-300 ease-linear"
     >
       <ul>
         <li v-for="link in links" :key="link.name" class="mb-2">
@@ -84,6 +100,20 @@
           >
             {{ link.name }}
           </a>
+        </li>
+
+        <!-- Login Link or User Info in Mobile -->
+        <li class="mb-2">
+          <div
+            v-if="!user"
+            @click="showLoginPopup"
+            class="cursor-pointer dark:text-gray-200 hover:text-sky-300"
+          >
+            Login
+          </div>
+          <span v-else class="block dark:text-white">
+            {{ user.name }}
+          </span>
         </li>
       </ul>
     </div>
@@ -173,9 +203,3 @@ const showLoginPopup = () => {
   isLoginPopupVisible.value = true;
 };
 </script>
-
-<style scoped>
-.menu-mobile {
-  transition: transform 0.3s ease;
-}
-</style>
