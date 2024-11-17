@@ -35,7 +35,7 @@ const users = ref([]);
 const fetchData = async () => {
   try {
     const response = await axios.get(
-      "http://api.phongnguyen.io.vn/api/v1/fetch-api"
+      "https://api.phongnguyen.io.vn/api/v1/fetch-api"
     );
     general.value = response.data.general;
     icons.value = response.data.icons;
