@@ -10,7 +10,7 @@ dayjs.extend(timezone);
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL =
-  import.meta.env.VITE_APP_API_URL || "http://localhost:8000/api"; // Sử dụng biến môi trường
+  import.meta.env.VITE_APP_API_URL || "http://backend.phongnguyen.vn/api"; // Sử dụng biến môi trường
 axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 axios.defaults.xsrfCookieName = "XSRF-TOKEN"; // Tên cookie CSRF Laravel dùng mặc định
 axios.defaults.xsrfHeaderName = "X-XSRF-TOKEN"; // Tên header để gửi token

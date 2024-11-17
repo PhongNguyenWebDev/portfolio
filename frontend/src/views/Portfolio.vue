@@ -34,7 +34,9 @@ const users = ref([]);
 // Hàm để fetch data từ API
 const fetchData = async () => {
   try {
-    const response = await axios.get("http://localhost:8000/api/v1/fetch-api");
+    const response = await axios.get(
+      "http://backend.phongnguyen.vn/api/v1/fetch-api"
+    );
     general.value = response.data.general;
     icons.value = response.data.icons;
     skills.value = response.data.skills;

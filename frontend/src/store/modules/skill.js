@@ -72,7 +72,7 @@ const actions = {
     }
   },
 
-  async createAboutMe({ commit }, newInfo) {
+  async createSkill({ commit }, newInfo) {
     try {
       const response = await axios.post("v1/admin/skills", newInfo);
       commit("ADD_INFO", response.data.data); // Thêm bản ghi vừa tạo vào store

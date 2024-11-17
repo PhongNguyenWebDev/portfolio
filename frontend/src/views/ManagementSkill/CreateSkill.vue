@@ -81,10 +81,10 @@ const skill = ref({
 
 function handleSubmit() {
   store
-    .dispatch("skills/createSkill", skill.value)
+    .dispatch("skill/createSkill", skill.value)
     .then(() => {
       Toast.success("Skill created successfully!");
-      router.push("/admin/skills");
+      router.push("/admin/skill");
     })
     .catch((error) => {
       Toast.error("Failed to create skill. Please try again.");
