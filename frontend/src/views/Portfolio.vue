@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Header :sliders="sliders" :icons="icons" />
+    <Header :general="general" :sliders="sliders" :icons="icons" />
     <main class="relative">
       <About :aboutMe="aboutMe" :workEx="workEx" />
       <Skills :skills="skills" />
       <Projects :projects="projects" />
-      <Contact :users="users" />
+      <Contact :users="users" :icons="icons" />
     </main>
     <Footer :users="users" :general="general" :icons="icons" />
   </div>

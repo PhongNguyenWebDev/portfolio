@@ -13,8 +13,8 @@ class GeneralController extends Controller
     // Lấy thông tin chung
     public function index()
     {
-        $general = General::all();
-        return GeneralResource::collection($general);
+        $general = General::find(1);  // Trả về một bản ghi duy nhất
+        return new GeneralResource($general);  // Trả về resource đơn
     }
 
     // Tạo thông tin chung mới
@@ -61,20 +61,27 @@ class GeneralController extends Controller
 
         try {
             // Handle logo file upload
+            // if ($request->hasFile('logo')) {
+            //     // Xóa logo hiện tại nếu có
+            //     if ($general->logo && Storage::disk('public')->exists($general->logo)) {
+            //         Storage::disk('public')->delete($general->logo);
+            //     }
+
+            //     // Lấy tên gốc của tệp logo và thay thế khoảng trắng bằng dấu gạch dưới
+            //     $logoName = $request->file('logo')->getClientOriginalName();
+            //     $logoName = str_replace(' ', '_', $logoName);  // Thay thế khoảng trắng bằng dấu gạch dưới
+
+            //     // Lưu logo mới với tên đã xử lý
+            //     $validatedData['logo'] = $request->file('logo')->storeAs('logos', $logoName, 'public');
+            // }
             if ($request->hasFile('logo')) {
-                // Xóa logo hiện tại nếu có
-                if ($general->logo && Storage::disk('public')->exists($general->logo)) {
-                    Storage::disk('public')->delete($general->logo);
+                // Xóa file cũ nếu có
+                if ($general->logo) {
+                    Storage::delete($general->logo);
                 }
-
-                // Lấy tên gốc của tệp logo và thay thế khoảng trắng bằng dấu gạch dưới
-                $logoName = $request->file('logo')->getClientOriginalName();
-                $logoName = str_replace(' ', '_', $logoName);  // Thay thế khoảng trắng bằng dấu gạch dưới
-
-                // Lưu logo mới với tên đã xử lý
-                $validatedData['logo'] = $request->file('logo')->storeAs('logos', $logoName, 'public');
+                // Lưu file mới
+                $validatedData['logo'] = $request->file('logo')->store('logos', 'public');
             }
-
             // Update general information
             $general->update($validatedData);
             return new GeneralResource($general);

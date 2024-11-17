@@ -97,14 +97,6 @@ class ProjectController extends Controller
             // Xử lý upload nhiều file cho `image_tech`
             $uploadedFiles = [];
             if ($request->hasFile('image_tech')) {
-                // Xóa các file cũ nếu có
-                // $oldImages = json_decode($project->image_tech, true);
-                // if ($oldImages) {
-                //     foreach ($oldImages as $image) {
-                //         Storage::delete($image);
-                //     }
-                // }
-                // Lưu các file mới
                 foreach ($request->file('image_tech') as $file) {
                     $filename = time() . '_' . $file->getClientOriginalName();
                     $filePath = $file->storeAs('multiple_images', $filename, 'public');

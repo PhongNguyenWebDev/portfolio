@@ -7,24 +7,20 @@
         class="lg:col-span-6 col-span-12 transition-opacity duration-700 ease-in-out opacity-0 animate-fade-in"
       >
         <!-- Logo -->
-        <div class="flex-shrink-0">
-          <img src="@/assets/img/logo.png" alt="Logo" class="w-40" />
+        <div class="flex-shrink-0" v-for="item in general" :key="item.logo">
+          <img
+            rel="preload"
+            :src="getImageUrl(item.logo)"
+            alt="Logo"
+            class="w-40"
+            loading="lazy"
+          />
+          <p
+            class="text-wrap text-start space-y-3"
+            v-html="item.des_footer"
+          ></p>
         </div>
         <!-- Intro -->
-        <div class="text-start text-gray-400 lg:w-full w-80">
-          <p class="text-wrap">
-            Welcome to my portfolio, where I showcase the projects and skills
-            I’ve developed in web development. I focus on creating dynamic,
-            user-friendly websites and applications, highlighting both front-end
-            and back-end expertise.
-          </p>
-          <p class="my-4">
-            Explore my work to see how I bring ideas to life through intuitive,
-            responsive design and efficient coding. Thank you for visiting, and
-            I look forward to connecting with you!
-          </p>
-          <p class="z-20">Copyright©2024 My Portfolio. All rights reserved.</p>
-        </div>
       </div>
       <div
         class="lg:col-span-6 col-span-12 lg:pt-0 pt-10 text-start flex transition-opacity duration-700 ease-in-out opacity-0 animate-fade-in delay-200"
@@ -45,14 +41,18 @@
         <!-- Contact -->
         <div class="lg:ps-32">
           <h2 class="text-2xl font-medium mb-5 text-cyan-300">Contact</h2>
-          <div class="space-y-2 text-gray-600 dark:text-gray-300">
+          <div
+            class="space-y-2 text-gray-600 dark:text-gray-300"
+            v-for="item in users"
+            :key="item.id"
+          >
             <div>
               <font-awesome-icon
                 :icon="['far', 'envelope']"
                 size="lg"
                 class="pr-2 dark:text-cyan-300"
               />
-              {{ email }}
+              {{ item.email }}
             </div>
             <div>
               <font-awesome-icon
@@ -60,7 +60,7 @@
                 size="lg"
                 class="pr-2 dark:text-cyan-300"
               />
-              {{ phone }}
+              {{ item.phone }}
             </div>
             <div>
               <font-awesome-icon
@@ -68,17 +68,17 @@
                 size="lg"
                 class="pr-2 dark:text-cyan-300"
               />
-              {{ address }}
+              {{ item.address }}
             </div>
           </div>
           <div class="space-y-3 mt-4">
             <ul class="flex space-x-5">
-              <li v-for="icon in icons" :key="icon.name">
+              <li v-for="item in icons" :key="item.id">
                 <a
-                  :href="icon.link"
+                  :href="item.url"
                   class="flex items-center justify-center w-10 h-10 rounded-full ring-1 dark:text-white ring-sky-400 hover:bg-cyan-500 transition-transform duration-300 transform hover:scale-110"
                 >
-                  <font-awesome-icon :icon="['fab', icon.name]" />
+                  <font-awesome-icon :icon="['fab', item.class_name]" />
                 </a>
               </li>
             </ul>
@@ -88,7 +88,25 @@
     </div>
   </footer>
 </template>
-
+<script setup>
+import { ref, defineProps } from "vue";
+const props = defineProps({
+  general: {
+    type: Array,
+    required: true,
+  },
+  users: {
+    type: Array,
+    required: true,
+  },
+  icons: {
+    type: Array,
+    required: true,
+  },
+});
+const getImageUrl = (imagePath) =>
+  imagePath ? `http://localhost:8000${imagePath}` : "";
+</script>
 <script>
 export default {
   name: "Footer",
@@ -101,14 +119,6 @@ export default {
         { text: "Projects", href: "#projects" },
         { text: "Contact", href: "#contact" },
       ],
-      icons: [
-        { name: "facebook-f", link: "https://facebook.com" },
-        { name: "linkedin-in", link: "https://linkedin.com" },
-        { name: "github", link: "https://github.com" },
-      ],
-      email: "phong302.work@gmail.com",
-      phone: "+84 328 414 771",
-      address: "Ho Chi Minh City, VietNam",
     };
   },
 };

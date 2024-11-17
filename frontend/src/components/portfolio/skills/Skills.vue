@@ -29,6 +29,7 @@
             {{ skill.title }}
           </h2>
           <span class="dark:text-cyan-400">
+            ({{ skill.level }})
             {{ skill.process + "%" }}
           </span>
         </div>

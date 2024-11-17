@@ -4,7 +4,7 @@
       <header
         class="lg:fixed top-0 lg:left-0 px-2 lg:right-0 z-10 transition-transform dark:bg-black w-full shadow-lg"
       >
-        <NavBar />
+        <NavBar :general="general" />
       </header>
     </section>
     <Slider :sliders="sliders" :icons="icons" />
@@ -22,6 +22,10 @@ const props = defineProps({
     required: true,
   },
   icons: {
+    type: Array,
+    required: true,
+  },
+  general: {
     type: Array,
     required: true,
   },

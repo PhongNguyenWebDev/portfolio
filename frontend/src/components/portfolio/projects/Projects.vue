@@ -16,15 +16,15 @@
     </div>
 
     <!-- Projects -->
-    <div class="grid lg:grid-cols-12 grid-cols-1">
+    <div class="grid lg:grid-cols-12 grid-cols-1 gap-x-5">
       <div
         v-for="item in projects"
         :key="item.id"
-        class="col-span-4 dark:bg-slate-900 mx-auto shadow-lg rounded-lg relative project_item"
+        class="col-span-4 dark:bg-slate-900 w-full shadow-lg rounded-lg relative project_item"
       >
         <img
           class="object-cover transition-transform duration-500 ease-in-out hover:scale-105 rounded-t-lg lg:h-[200px] h-[200px] w-full dark:ring-1 dark:ring-cyan-200"
-          :src="getImageUrl(item.image)"
+          :src="getImageUrl(item.image_project)"
           alt="Errors image"
           rel="preload"
           loading="lazy"
@@ -40,12 +40,15 @@
           <!-- role -->
 
           <p class="text-sm text-gray-500" v-html="item.description"></p>
-          <div class="text-sm flex text-gray-500 gap-x-3">
-            <i class="fa-brands fa-html5 size-6 text-red-800"></i>
-            <i class="fa-brands fa-css3-alt size-6 text-blue-800"></i>
-            <i class="fa-brands fa-js size-6 text-yellow-300"></i>
-            <i class="fa-brands fa-laravel size-6 text-red-800"></i>
-            <i class="fa-solid fa-database size-6 text-blue-800"></i>
+          <div class="w-full text-sm flex text-gray-500 gap-x-3">
+            <img
+              v-for="(tech, index) in item.image_tech"
+              :key="index"
+              class="h-8 w-8 object-cover"
+              :src="getImageUrl(tech)"
+              loading="lazy"
+              alt="Tech icon"
+            />
           </div>
           <a :href="item.url">
             <span

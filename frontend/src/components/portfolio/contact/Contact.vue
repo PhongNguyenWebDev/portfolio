@@ -79,7 +79,7 @@
           Find Me
         </h3>
         <!-- Infomation -->
-        <div class="pb-4">
+        <div v-for="item in users" :key="item.id" class="pb-4">
           <h4 class="text-xl font-medium mb-4 dark:text-white">Information</h4>
           <div class="text-gray-600 dark:text-gray-300">
             <font-awesome-icon
@@ -87,14 +87,14 @@
               size="lg"
               class="pr-2 dark:text-cyan-300"
             />
-            phong302.work@gmail.com
+            {{ item.email }}
           </div>
           <div class="text-gray-600 py-2 dark:text-gray-300">
             <font-awesome-icon
               :icon="['fas', 'phone']"
               size="lg"
               class="pr-2 dark:text-cyan-300"
-            />+84 328 414 771.
+            />{{ item.phone }}
           </div>
           <div class="text-gray-600 dark:text-gray-300">
             <font-awesome-icon
@@ -102,7 +102,7 @@
               size="lg"
               class="pr-2 dark:text-cyan-300"
             />
-            Address: Ho Chi Minh City, VietNam.
+            Address: {{ item.address }}.
           </div>
         </div>
         <div class="space-y-3">
@@ -112,12 +112,12 @@
           <ul
             class="flex justify-start space-x-5 align-center text-black dark:text-white"
           >
-            <li v-for="icon in icons" :key="icon.name" class="icon-shadow">
+            <li v-for="item in icons" :key="item.id" class="icon-shadow">
               <a
-                :href="icon.link"
+                :href="item.link"
                 class="flex justify-center text-center items-center w-10 h-10 rounded-full ring-1 ring-sky-400 hover:bg-cyan-500"
               >
-                <font-awesome-icon :icon="['fab', icon.name]" />
+                <font-awesome-icon :icon="['fab', item.class_name]" />
               </a>
             </li>
           </ul>
@@ -128,21 +128,29 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, defineProps } from "vue";
 import axios from "axios";
-
 // Data
 const form = ref({
   name: "",
   email: "",
   message: "",
 });
-const icons = ref([
-  { name: "facebook-f", link: "https://facebook.com" },
-  { name: "linkedin-in", link: "https://linkedin.com" },
-  { name: "github", link: "https://github.com" },
-]);
-
+// const icons = ref([
+//   { name: "facebook-f", link: "https://facebook.com" },
+//   { name: "linkedin-in", link: "https://linkedin.com" },
+//   { name: "github", link: "https://github.com" },
+// ]);
+const props = defineProps({
+  users: {
+    type: Array,
+    required: true,
+  },
+  icons: {
+    type: Array,
+    required: true,
+  },
+});
 // Methods
 const submitForm = async () => {
   try {
