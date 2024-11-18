@@ -102,11 +102,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, getCurrentInstance } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import BaseButton from "@/components/BaseButton.vue";
 
+const instance = getCurrentInstance();
+const Toast = instance.appContext.config.globalProperties.$toast;
 const store = useStore();
 const router = useRouter();
 
@@ -171,12 +173,24 @@ const handleSubmit = async () => {
   }
 
   try {
+    // Gửi request đến API qua Vuex action
     await store.dispatch("project/createInfo", formData);
-    router.push("/admin/project");
+
+    // Hiển thị thông báo thành công
+    Toast.success("Project created successfully!");
+
+    // Chờ 1.5 giây trước khi chuyển hướng
+    setTimeout(() => {
+      router.push("/admin/project");
+    }, 1500);
   } catch (error) {
     console.error("Error creating project:", error);
+
+    // Hiển thị thông báo lỗi nếu có vấn đề xảy ra
+    Toast.error("Failed to create project. Please try again.");
   } finally {
-    isSubmitting.value = false; // Hide loading state
+    // Reset trạng thái isSubmitting
+    isSubmitting.value = false;
   }
 };
 </script>

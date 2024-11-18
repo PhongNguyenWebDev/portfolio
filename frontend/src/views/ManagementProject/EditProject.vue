@@ -32,9 +32,9 @@
         />
       </div>
 
-      <div class="mb-4" v-if="project.image_project">
+      <div class="mb-4" v-if="project.imagePreview">
         <img
-          :src="project.image_project"
+          :src="project.imagePreview"
           alt="Current Project Image"
           class="max-w-32 mt-2"
         />
@@ -124,26 +124,29 @@ const project = ref({
   description: "",
   url: "",
   image_project: null,
-  image_techPreviews: [],
   imagePreview: null,
   image_tech: [],
+  image_techPreviews: [],
 });
 
 const error = ref(null);
+
 const fetchProject = async () => {
   try {
     const id = route.params.id;
     const data = await store.dispatch("project/getInfoById", id);
-    console.log("Fetched project data:", data); // Kiểm tra dữ liệu
 
     project.value = {
       ...project.value,
       ...data,
     };
 
-    // Nếu image_tech là null, khởi tạo mảng rỗng
-    if (!project.value.image_tech) {
-      project.value.image_tech = [];
+    // Set preview images
+    if (data.image_project) {
+      project.value.imagePreview = data.image_project;
+    }
+    if (Array.isArray(data.image_tech)) {
+      project.value.image_techPreviews = data.image_tech;
     }
   } catch (err) {
     console.error("Error fetching project data:", err);
@@ -156,88 +159,75 @@ const getImageUrl = (imagePath) => {
   return baseUrl + imagePath;
 };
 
-// Helper function for handling file rendering
-const renderFile = (files) => {
-  return Array.from(files).map((file) => URL.createObjectURL(file));
-};
-
 const handleFileChange = (field, event) => {
-  if (event.target.files.length > 0) {
-    const files = event.target.files;
-    if (field === "image_project") {
-      project.value.imagePreview = renderFile(files)[0];
-    } else if (field === "image_tech") {
-      project.value.image_techPreviews = renderFile(files);
-      // Quyết định xem image có được thêm vào ko
+  const files = event.target.files;
+  if (files) {
+    if (field === "image_tech") {
       project.value.image_tech = Array.from(files);
+      project.value.image_techPreviews = [];
+
+      Array.from(files).forEach((file) => {
+        renderFile(file, "tech");
+      });
+    } else if (field === "image_project") {
+      project.value.image_project = files[0];
+      renderFile(files[0], "project");
     }
   }
 };
 
+const renderFile = (file, type) => {
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    if (type === "tech") {
+      project.value.image_techPreviews.push(reader.result);
+    } else if (type === "project") {
+      project.value.imagePreview = reader.result;
+    }
+  };
+  reader.readAsDataURL(file);
+};
+
 const handleSubmit = async () => {
   const formData = new FormData();
-  const fields = [
-    "id",
-    "title",
-    "description",
-    "url",
-    "image_project",
-    "image_tech",
-  ];
+  formData.append("title", project.value.title);
+  formData.append("description", project.value.description);
+  formData.append("url", project.value.url);
 
-  // Append ID only once
-  formData.append("id", route.params.id);
+  // Chỉ thêm `image_project` nếu người dùng thay đổi
+  if (project.value.image_project instanceof File) {
+    formData.append("image_project", project.value.image_project);
+  }
 
-  // Helper function to handle file appending
-  const handleFileUpload = (field, allowedTypes) => {
-    if (project.value[field] && project.value[field] instanceof Blob) {
-      const file = project.value[field];
-      const fileName = file.name;
-      const fileExtension = file.type ? file.type.split("/").pop() : "";
-      if (allowedTypes.includes(fileExtension)) {
-        formData.append(field, file, fileName);
-      } else {
-        console.warn(`${field} must be a valid file type:`, file);
-      }
-    } else if (Array.isArray(project.value[field])) {
-      project.value[field].forEach((file) => {
-        if (file instanceof Blob) {
-          const fileExtension = file.type ? file.type.split("/").pop() : "";
-          if (allowedTypes.includes(fileExtension)) {
-            formData.append(field + "[]", file, file.name);
-          } else {
-            console.warn(`${field} must be a valid file type:`, file);
-          }
+  // Chỉ thêm `image_tech` nếu có sự thay đổi từ người dùng
+  if (project.value.image_tech.length > 0) {
+    const hasNewTechImages = project.value.image_tech.some(
+      (file) => file instanceof File
+    );
+    if (hasNewTechImages) {
+      project.value.image_tech.forEach((file) => {
+        if (file instanceof File) {
+          formData.append("image_tech[]", file);
         }
       });
     }
-  };
-
-  fields.forEach((field) => {
-    if (field === "image_project") {
-      handleFileUpload(field, ["jpeg", "png", "jpg", "gif"]);
-    } else if (field === "image_tech") {
-      handleFileUpload(field, ["jpeg", "png", "jpg", "gif"]);
-    } else {
-      if (project.value[field]) {
-        formData.append(field, project.value[field]);
-      }
-    }
-  });
+  }
 
   try {
+    // Sử dụng PATCH thay vì POST
     await store.dispatch("project/updateInfo", {
       id: route.params.id,
       formData,
     });
+
     Toast.success("Project updated successfully!");
     setTimeout(() => {
       router.push("/admin/project");
-    }, 4000);
+    }, 2000);
   } catch (err) {
     Toast.error("Unable to update project. Please try again.");
-    console.error("Error updating project:", err);
     error.value = "An error occurred while updating the project.";
+    console.error("Error updating project:", err);
   }
 };
 

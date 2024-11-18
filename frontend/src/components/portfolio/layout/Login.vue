@@ -1,10 +1,10 @@
 <template>
   <div
     v-if="isVisible"
-    class="fixed inset-0 mx-auto md:h-screen flex items-center justify-center lg:bg-black lg:bg-opacity-50"
+    class="fixed inset-0 mx-auto md:h-screen flex items-center justify-center lg:bg-black z-50 lg:bg-opacity-50"
   >
     <div
-      class="bg-white lg:w-[30%] w-[100%] lg:translate-x-0 translate-x-20 h-auto p-6 rounded-lg ring-1 ring-cyan-500 shadow-md relative pb-16 dark:bg-gray-800"
+      class="bg-white lg:w-[30%] w-[90%] lg:translate-x-0 translate-x-0 h-auto p-6 rounded-lg ring-1 ring-cyan-500 shadow-md relative pb-16 dark:bg-gray-800"
     >
       <a
         href="javascript:void(0)"

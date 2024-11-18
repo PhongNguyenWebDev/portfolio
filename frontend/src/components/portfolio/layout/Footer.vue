@@ -16,7 +16,7 @@
             loading="lazy"
           />
           <p
-            class="text-wrap text-start space-y-3"
+            class="text-wrap text-start space-y-3 dark:text-gray-200"
             v-html="item.des_footer"
           ></p>
         </div>
