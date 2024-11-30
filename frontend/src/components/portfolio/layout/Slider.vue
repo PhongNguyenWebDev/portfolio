@@ -1,5 +1,5 @@
 <template>
-  <section class="relative slider lg:pt-0 pt-20 bg-gray-100 dark:bg-black px-2">
+  <section class="relative slider lg:pt-0 pt-8 bg-gray-100 dark:bg-black px-2">
     <div
       class="mx-auto lg:w-[80%] lg:pt-10 pt-0 grid grid-cols-1 lg:grid-cols-12 lg:gap-4 items-center justify-center lg:h-screen dark:text-white text-center dark:bg-black bg-gray-100"
       v-for="slider in sliders"
@@ -67,7 +67,7 @@
         </div>
       </div>
       <div
-        class="lg:col-span-6 sm:col-span-6 flex lg:justify-end img-slide justify-end lg:mx-auto lg:w-[auto] w-full lg:mt-0 mt-2"
+        class="lg:col-span-6 sm:col-span-6 flex lg:justify-end img-slide justify-end lg:mx-auto lg:w-[auto] lg:mt-0 mt-2"
       >
         <img
           rel="preload"

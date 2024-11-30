@@ -1,6 +1,6 @@
 <template>
   <footer
-    class="mx-auto text-center px-4 py-20 bg-gray-100 dark:bg-gray-900 dark:border-gray-900 shadow-top block"
+    class="mx-auto text-center px-4 lg:py-20 py-10 bg-gray-100 dark:bg-gray-900 dark:border-gray-900 shadow-top block"
   >
     <div class="lg:mx-28 lg:grid lg:grid-cols-12 grid-cols-1 gap-x-10 mb-5">
       <div

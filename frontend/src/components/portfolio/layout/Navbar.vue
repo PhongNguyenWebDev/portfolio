@@ -9,7 +9,6 @@
       <div class="flex-shrink-0" v-for="item in general" :key="item.logo">
         <img rel="preload" :src="item.logo" alt="Logo" class="w-40" />
       </div>
-
       <!-- Navigation Links -->
       <div class="flex-grow lg:flex hidden justify-center">
         <ul class="flex space-x-16 mb-0">
@@ -77,22 +76,31 @@
           </div>
           <span v-else class="dark:text-white">{{ user.name }}</span>
         </div>
+        <!-- Hamburger Icon for Mobile -->
+        <button @click="toggleNavVisibility" class="lg:hidden block text-3xl">
+          <span :class="isMobileNavVisible ? 'text-gray-400' : 'text-gray-700'"
+            >☰</span
+          >
+        </button>
       </div>
-
-      <!-- Hamburger Icon for Mobile -->
-      <button @click="toggleNavVisibility" class="lg:hidden block text-3xl">
-        <span :class="isMobileNavVisible ? 'text-gray-400' : 'text-gray-700'"
-          >☰</span
-        >
-      </button>
     </nav>
 
     <!-- Mobile Navigation Menu -->
     <div
       v-show="isMobileNavVisible"
-      class="fixed top-0 left-0 h-full w-2/3 bg-white dark:bg-black z-50 p-4 transition-transform duration-300 ease-linear"
+      class="lg:hidden fixed top-0 left-0 h-full w-2/3 bg-white dark:bg-black z-50 p-4 transition-transform duration-300 ease-linear"
     >
-      <ul>
+      <!-- Close Icon -->
+      <button
+        @click="toggleNavVisibility"
+        class="absolute top-4 right-4 text-gray-700 dark:text-gray-200 text-2xl"
+        aria-label="Close"
+      >
+        &times;
+      </button>
+
+      <!-- Links -->
+      <ul class="lg:mt-8 mt-0">
         <li v-for="link in links" :key="link.name" class="mb-2">
           <a
             @click="scrollTo(link.link)"
