@@ -53,8 +53,8 @@ Thêm liên kết và quản lý thông tin dễ dàng.
 
 ---
 ```bash
-git clone https://github.com/PhongNguyenWebDev/laravel_inventory_management.git
-cd laravel_inventory_management
+git clone https://github.com/PhongNguyenWebDev/portfolio.git
+cd portfolio
 ```
 ## Cài đặt Backend
 # Di chuyển đến thư mục backend:
