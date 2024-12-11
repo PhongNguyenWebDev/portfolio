@@ -57,40 +57,40 @@ git clone https://github.com/PhongNguyenWebDev/portfolio.git
 cd portfolio
 ```
 ## Cài đặt Backend
-# Di chuyển đến thư mục backend:
+Di chuyển đến thư mục backend:
 ```bash
 cd backend
 ```
-# Cài đặt các dependencies Laravel:
+Cài đặt các dependencies Laravel:
 ```bash
 composer install
 ```
-# Sao chép .env.example và thiết lập:
+Sao chép .env.example và thiết lập:
 ```bash
 cp .env.example .env
 ```
-# Tạo key Laravel:
+Tạo key Laravel:
 ```bash
 php artisan key:generate
 ```
-# Chạy migrations:
+Chạy migrations:
 ```bash
 php artisan migrate --seed
 ```
-# Khởi động server Laravel:
+Khởi động server Laravel:
 ```bash
 php artisan serve
 ```
 ## Cài đặt Frontend
-# Di chuyển đến thư mục frontend:
+Di chuyển đến thư mục frontend:
 ```bash
 cd ../frontend
 ```
-# Cài đặt các dependencies Vue.js:
+Cài đặt các dependencies Vue.js:
 ```bash
 npm install
 ```
-# Khởi động Vue.js development server:
+Khởi động Vue.js development server:
 ```bash
 npm run dev
 ```
